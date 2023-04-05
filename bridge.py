@@ -1,9 +1,9 @@
-from adapter import AbstractNotificationAdapter
+from notification import Notification
 
 
 class UserNotification:
-    def __init__(self, notification_adapter: AbstractNotificationAdapter):
-        self.notification_adapter = notification_adapter
+    def __init__(self, notification_service):
+        self.notification_service = notification_service
 
-    def send(self):
-        self.notification_adapter.send_notification()
+    def send_notification(self, notification: Notification):
+        self.notification_service.send(notification)

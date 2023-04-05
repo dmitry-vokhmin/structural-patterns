@@ -1,31 +1,16 @@
-from adapter import SmartphoneNotificationAdapter, TabletNotificationAdapter, DesktopNotificationAdapter
 from bridge import UserNotification
-from notification import Notification, NotificationWithSubject, NotificationWithAttachment
-from recipient import Recipient, GroupRecipient
+from factory import NotificationType, NotificationFactory
+from notification import AttachmentNotification
+from user import User, UserGroup
 
 if __name__ == '__main__':
-    recipient = Recipient('John')
-    recipient2 = Recipient('Jane')
-    group_recipient = GroupRecipient('Team', [recipient, recipient2])
-    notification = Notification('Hello', [recipient, group_recipient])
-    notification.send()
-
-    # Decorator
-    notification_with_subject = NotificationWithSubject(notification, 'Important announcement')
-    notification_with_attachment = NotificationWithAttachment(
-        notification_with_subject, 'product_images.zip'
+    recipient = User('John', 'email', 'phone')
+    recipient2 = User('Jane', 'email', 'phone')
+    group_recipient = UserGroup('Team', [recipient, recipient2])
+    notification = AttachmentNotification('Hello', [recipient, group_recipient], 'attachment')
+    notification_service = NotificationFactory.create_notification_service(
+        NotificationType.SMS, attachment=True
     )
-    notification_with_attachment.send()
+    user_notification = UserNotification(notification_service)
+    user_notification.send_notification(notification)
 
-    # Adapter
-    smartphone_notification = SmartphoneNotificationAdapter(notification)
-    tablet_notification = TabletNotificationAdapter(notification)
-    desktop_notification = DesktopNotificationAdapter(notification)
-
-    smartphone_notification.send_notification()
-    tablet_notification.send_notification()
-    desktop_notification.send_notification()
-
-    # Bridge
-    user_notification = UserNotification(smartphone_notification)
-    user_notification.send()
